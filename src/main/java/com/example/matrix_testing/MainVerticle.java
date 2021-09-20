@@ -26,8 +26,10 @@ public class MainVerticle extends AbstractVerticle {
   public void start(Promise<Void> startPromise) throws Exception {
     Router router = Router.router(vertx);
 
+    // Bind this handler to all routes and it will handle parsing the Matrix params
     router.route().handler(this::matrixProcessor);
 
+    // In all subsequent handlers, the matrix params are available from routingContext.get("pathSegments")
     router.get().produces("application/json").handler(this::handleRequest);
 
     vertx.createHttpServer().requestHandler(router).listen(8080)
@@ -36,6 +38,10 @@ public class MainVerticle extends AbstractVerticle {
       .onSuccess(v -> startPromise.complete());
   }
 
+  /**
+   * Use the `path` from the RoutingContext and parse out matrix parameters
+   * @param ctx The {@link RoutingContext} of the request
+   */
   private void matrixProcessor(RoutingContext ctx) {
     var pathParts = ctx.request().path().split("/");
 
