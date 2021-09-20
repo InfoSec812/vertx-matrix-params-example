@@ -47,9 +47,9 @@ public class MainVerticle extends AbstractVerticle {
 
     LinkedHashMap<String, MultiMap> pathSegments = new LinkedHashMap<>();
 
-    for (String path: pathParts) {
+    for (var pathPart: pathParts) {
       MultiMap matrixParams = MultiMap.caseInsensitiveMultiMap();
-      var pathSegmentParts = path.split(";");
+      var pathSegmentParts = pathPart.split(";");
       var pathName = pathSegmentParts[0];
       for (int i = 1; i < pathSegmentParts.length; i++) {
         var keyValue = pathSegmentParts[i].split("=");
