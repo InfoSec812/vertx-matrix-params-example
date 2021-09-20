@@ -30,13 +30,10 @@ public class MainVerticle extends AbstractVerticle {
 
     router.get().produces("application/json").handler(this::handleRequest);
 
-    vertx.createHttpServer().requestHandler(router).listen(8080).onComplete(res -> {
-      if (res.succeeded()) {
-        startPromise.complete();
-      } else {
-        startPromise.fail(res.cause());
-      }
-    });
+    vertx.createHttpServer().requestHandler(router).listen(8080)
+      .mapEmpty()
+      .onFailure(startPromise::fail)
+      .onSuccess(v -> startPromise.complete());
   }
 
   private void matrixProcessor(RoutingContext ctx) {
@@ -62,14 +59,13 @@ public class MainVerticle extends AbstractVerticle {
   }
 
   private void handleRequest(RoutingContext ctx) {
-    LOG.warn("Path: {}", ctx.request().path());
     var pathSegments = ctx.get("pathSegments");
     if (pathSegments instanceof LinkedHashMap) {
       LinkedHashMap<String, MultiMap> p = (LinkedHashMap<String, MultiMap>) pathSegments;
-      for (var path: p.keySet()) {
-        MultiMap matrixParams = p.get(path);
+      for (var path: p.entrySet()) {
+        MultiMap matrixParams = path.getValue();
         for (var param: matrixParams.names()) {
-          LOG.info("path = {}: key = {}: values = {}", path, param, matrixParams.getAll(param));
+          LOG.info("path = {}: key = {}: values = {}", path.getKey(), param, matrixParams.getAll(param));
         }
       }
     }
