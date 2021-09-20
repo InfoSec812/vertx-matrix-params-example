@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -55,11 +52,9 @@ public class MainVerticle extends AbstractVerticle {
         var keyValue = pathSegmentParts[i].split("=");
         var key = keyValue[0];
         var values = keyValue[1].split(",");
-        for (var value: values) {
-          matrixParams.add(key, value);
-        }
-        pathSegments.put(pathName, matrixParams);
+        matrixParams.add(key, (Iterable<String>) List.of(values));
       }
+      pathSegments.put(pathName, matrixParams);
     }
 
     ctx.put("pathSegments", pathSegments);
