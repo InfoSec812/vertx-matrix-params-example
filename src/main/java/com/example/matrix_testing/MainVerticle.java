@@ -50,9 +50,9 @@ public class MainVerticle extends AbstractVerticle {
       var pathName = pathSegmentParts[0];
       for (int i = 1; i < pathSegmentParts.length; i++) {
         var keyValue = pathSegmentParts[i].split("=");
-        var key = keyValue[0];
+        var key = (CharSequence) keyValue[0];
         var values = keyValue[1].split(",");
-        matrixParams.add(key, (Iterable<String>) List.of(values));
+        matrixParams.add(key, List.of(values));
       }
       pathSegments.put(pathName, matrixParams);
     }
@@ -69,7 +69,7 @@ public class MainVerticle extends AbstractVerticle {
       for (var path: p.keySet()) {
         MultiMap matrixParams = p.get(path);
         for (var param: matrixParams.names()) {
-          LOG.info("{}: {}: {}", path, param, matrixParams.getAll(param));
+          LOG.info("path = {}: key = {}: values = {}", path, param, matrixParams.getAll(param));
         }
       }
     }
