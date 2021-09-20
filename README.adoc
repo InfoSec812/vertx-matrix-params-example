@@ -2,14 +2,9 @@
 
 image:https://img.shields.io/badge/vert.x-4.1.4-purple.svg[link="https://vertx.io"]
 
-This application was generated using http://start.vertx.io
+This is a proof-of-concept to show how it is possible to process/handle matrix path parameters in Vert.x Web's Router
 
 == Building
-
-To launch your tests:
-```
-./mvnw clean test
-```
 
 To package your application:
 ```
@@ -18,7 +13,7 @@ To package your application:
 
 To run your application:
 ```
-./mvnw clean compile exec:java
+./mvnw clean compile vertx:run
 ```
 
 == Help
