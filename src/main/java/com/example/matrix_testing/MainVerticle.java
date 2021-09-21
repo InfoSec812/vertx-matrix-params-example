@@ -1,14 +1,13 @@
 package com.example.matrix_testing;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.MultiMap;
-import io.vertx.core.Promise;
+import io.vertx.core.*;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -24,10 +23,10 @@ public class MainVerticle extends AbstractVerticle {
     // In all subsequent handlers, the matrix params are available from routingContext.get("pathSegments")
     router.get().produces("application/json").handler(this::handleRequest);
 
-    vertx.createHttpServer().requestHandler(router).listen(8080)
-      .mapEmpty()
-      .onFailure(startPromise::fail)
-      .onSuccess(v -> startPromise.complete());
+    Future<Void> httpServerResult = vertx.createHttpServer().requestHandler(router).listen(8080)
+      .mapEmpty();
+
+    startPromise.handle(httpServerResult);
   }
 
   /**
