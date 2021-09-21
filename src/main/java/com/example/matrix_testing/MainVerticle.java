@@ -3,27 +3,19 @@ package com.example.matrix_testing;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Promise;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.lang.System.out;
 
 public class MainVerticle extends AbstractVerticle {
 
   private static final Logger LOG = LoggerFactory.getLogger(MainVerticle.class);
 
   @Override
-  public void start(Promise<Void> startPromise) throws Exception {
+  public void start(Promise<Void> startPromise) {
     Router router = Router.router(vertx);
 
     // Bind this handler to all routes and it will handle parsing the Matrix params
@@ -66,14 +58,14 @@ public class MainVerticle extends AbstractVerticle {
 
   private void handleRequest(RoutingContext ctx) {
     var pathSegments = ctx.get("pathSegments");
-    if (pathSegments instanceof LinkedHashMap) {
-      LinkedHashMap<String, MultiMap> p = (LinkedHashMap<String, MultiMap>) pathSegments;
-      for (var path: p.entrySet()) {
-        MultiMap matrixParams = path.getValue();
-        for (var param: matrixParams.names()) {
-          LOG.info("path = {}: key = {}: values = {}", path.getKey(), param, matrixParams.getAll(param));
+    if (pathSegments instanceof LinkedHashMap p) {
+      p.forEach((key, value) -> {
+        if (value instanceof MultiMap matrixParams) {
+          for (var param : matrixParams.names()) {
+            LOG.info("path = {}: key = {}: values = {}", key, param, matrixParams.getAll(param));
+          }
         }
-      }
+      });
     }
     ctx.end("OK");
   }
