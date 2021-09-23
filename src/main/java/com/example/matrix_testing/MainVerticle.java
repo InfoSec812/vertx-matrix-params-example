@@ -1,6 +1,7 @@
 package com.example.matrix_testing;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Promise;
 import io.vertx.ext.web.Router;
@@ -16,7 +17,7 @@ public class MainVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) {
-    Router router = Router.router(vertx);
+    var router = Router.router(vertx);
 
     // Bind this handler to all routes and it will handle parsing the Matrix params
     router.route().handler(this::matrixProcessor);
@@ -24,10 +25,12 @@ public class MainVerticle extends AbstractVerticle {
     // In all subsequent handlers, the matrix params are available from routingContext.get("pathSegments")
     router.get().produces("application/json").handler(this::handleRequest);
 
-    vertx.createHttpServer().requestHandler(router).listen(8080)
-      .mapEmpty()
-      .onFailure(startPromise::fail)
-      .onSuccess(v -> startPromise.complete());
+    vertx
+      .createHttpServer()
+      .requestHandler(router)
+      .listen(8080)
+      .<Void>mapEmpty()
+      .onComplete(startPromise::handle);
   }
 
   /**
