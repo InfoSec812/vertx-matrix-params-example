@@ -29,7 +29,7 @@ public class MainVerticle extends AbstractVerticle {
       .requestHandler(router)
       .listen(8080)
       .<Void>mapEmpty()
-      .onComplete(startPromise::handle);
+      .onComplete(startPromise);
   }
 
   /**
